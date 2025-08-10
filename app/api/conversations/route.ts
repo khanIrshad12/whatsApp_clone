@@ -44,7 +44,12 @@ export async function GET(request: NextRequest) {
       };
     }));
 
-    return NextResponse.json(formattedConversations);
+    // Filter out the business number from conversations
+    const filteredConversations = formattedConversations.filter(
+      conv => conv.wa_id !== BUSINESS_NUMBER
+    );
+
+    return NextResponse.json(filteredConversations);
   } catch (error) {
     console.error('❌ Error fetching conversations:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
