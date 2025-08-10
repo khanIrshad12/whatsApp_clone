@@ -383,13 +383,13 @@ text-whatsapp-text-secondary (#8696a0)
 2. **Deploy on Vercel**
    - Connect your GitHub repository to Vercel
    - Set environment variables:
-     - `DATABASE_URL`: Your MongoDB Atlas connection string
+     - `DATABASE_URI`: Your MongoDB Atlas connection string
      - `NEXT_PUBLIC_APP_URL`: Your Vercel app URL
    - Deploy
 
 3. **Environment Variables**
    ```env
-   DATABASE_URL="mongodb+srv://username:password@cluster.mongodb.net/whatsapp?retryWrites=true&w=majority"
+   DATABASE_URI="mongodb+srv://username:password@cluster.mongodb.net/whatsapp?retryWrites=true&w=majority"
    NEXT_PUBLIC_APP_URL="https://your-app.vercel.app"
    ```
 
@@ -407,7 +407,7 @@ text-whatsapp-text-secondary (#8696a0)
 ```bash
 Error: Cannot connect to MongoDB
 ```
-**Solution:** Check your `DATABASE_URL` in `.env.local` and ensure MongoDB Atlas IP whitelist includes your IP.
+**Solution:** Check your `DATABASE_URI` in `.env.local` and ensure MongoDB Atlas IP whitelist includes your IP.
 
 **2. Prisma Client Not Generated**
 ```bash
