@@ -13,18 +13,18 @@ async function setup() {
     if (!await fs.pathExists(envPath)) {
       console.log('📝 Creating .env.local file...');
       const envContent = `# MongoDB Configuration
-MONGODB_URI=mongodb+srv://khanirshad:whatapp_clone@cluster0.7kvr0bd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+DATABASE_URI=mongodb+srv://khanirshad:whatapp_clone@cluster0.7kvr0bd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 
 # Next.js Configuration
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 # Instructions:
-# 1. Replace the MONGODB_URI with your actual MongoDB Atlas connection string
+# 1. Replace the DATABASE_URI with your actual MongoDB Atlas connection string
 # 2. Update NEXT_PUBLIC_APP_URL for production deployment
 `;
       await fs.writeFile(envPath, envContent);
       console.log('✅ .env.local file created');
-      console.log('⚠️  Please update the MONGODB_URI in .env.local with your actual MongoDB connection string\n');
+      console.log('⚠️  Please update the DATABASE_URI in .env.local with your actual MongoDB connection string\n');
     } else {
       console.log('✅ .env.local file already exists');
     }
@@ -81,7 +81,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
     console.log('\n🎉 Setup completed successfully!');
     console.log('\n📋 Next steps:');
-    console.log('1. Update MONGODB_URI in .env.local with your MongoDB Atlas connection string');
+    console.log('1. Update DATABASE_URI in .env.local with your MongoDB Atlas connection string');
     console.log('2. Run "npm run dev" to start the development server');
     console.log('3. Run "npm run create-sample-data" to populate the database with sample data');
     console.log('4. Open http://localhost:3000 to view the application');
