@@ -71,8 +71,7 @@ export default function CustomerChat() {
 
     // Initial fetch
     fetchMessages();
-    // Mark messages as read when customer opens conversation
-    markMessagesAsRead();
+    // Don't mark messages as read automatically - let business side handle it
 
     // Poll every 2 seconds
     const interval = setInterval(() => {
@@ -248,6 +247,24 @@ export default function CustomerChat() {
         setNewMessage('');
         // Ensure we scroll to bottom after sending
         setIsAtBottom(true);
+
+        // CRITICAL: Trigger business-side conversations update for real-time count and last message
+        setTimeout(async () => {
+          try {
+            console.log('🔄 CUSTOMER - Triggering business-side update after 1000ms delay');
+            // Trigger conversations API to refresh business sidebar
+            const response = await fetch(`/api/conversations?trigger=customer&t=${Date.now()}`, {
+              method: 'GET',
+              headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache'
+              }
+            });
+            console.log('🔄 CUSTOMER - Business-side update triggered successfully');
+          } catch (error) {
+            console.error('❌ CUSTOMER - Error triggering business-side update:', error);
+          }
+        }, 1000); // Increased delay to ensure database transaction is fully committed
 
         // If this is the first message, ensure customer name is saved in database
         if (messages.length === 0) {

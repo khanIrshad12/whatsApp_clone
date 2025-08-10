@@ -21,9 +21,27 @@ export default function Home() {
 
   const fetchConversations = async () => {
     try {
-      const response = await fetch('/api/conversations');
+      // Add cache-busting and headers for production
+      const timestamp = Date.now();
+      console.log('🔄 BUSINESS - Fetching conversations with timestamp:', timestamp);
+      const response = await fetch(`/api/conversations?t=${timestamp}`, {
+        method: 'GET',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      });
       if (response.ok) {
         const data = await response.json();
+        console.log('🔄 BUSINESS - Conversations updated:', {
+          count: data.length,
+          conversations: data.map((c: any) => ({
+            waId: c.wa_id,
+            lastMessage: c.lastMessage?.text?.body,
+            messageCount: c.messageCount
+          }))
+        });
         setConversations(data);
       }
     } catch (error) {
@@ -82,7 +100,11 @@ export default function Home() {
       if (response.ok) {
         const newMessage = await response.json();
         setMessages(prev => [...prev, newMessage]);
-        fetchConversations(); // Refresh conversations to update last message
+        
+        // Immediately update conversations for real-time sidebar updates
+        setTimeout(() => {
+          fetchConversations();
+        }, 1000); // Increased delay to ensure database transaction is fully committed
       }
     } catch (error) {
       console.error('❌ Error sending message:', error);
@@ -95,6 +117,15 @@ export default function Home() {
     setLoading(false);
   }, []);
 
+  // Global polling for sidebar updates - CRITICAL for production real-time updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchConversations();
+    }, 2000); // Poll every 2 seconds for sidebar updates
+
+    return () => clearInterval(interval);
+  }, []);
+
   // Handle conversation selection and real-time polling
   useEffect(() => {
     if (selectedConversation) {
@@ -105,7 +136,7 @@ export default function Home() {
       // Poll every 1 second for new messages (faster for status updates)
       const interval = setInterval(() => {
         fetchMessages(selectedConversation.conversation_id);
-        fetchConversations(); // Also refresh conversations to update unread counts
+        // Don't call fetchConversations here since we have global polling
       }, 1000);
 
       return () => clearInterval(interval);
